@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<hibernate-mapping package="cn.travel.domain" >
+	<class name="Member" table="sys_member" >
+		<id name="uid"  >
+			<generator class="native"></generator>
+		</id>
+		<property name="username"  ></property>
+		<property name="password"  ></property>
+		<property name="name"  ></property>
+		<property name="birthday"  ></property>
+		<property name="sex"  ></property>
+		<property name="telephone"  ></property>
+		<property name="email"  ></property>
+		<property name="status"  ></property>
+		<property name="code"  ></property>
+	</class>
+</hibernate-mapping>

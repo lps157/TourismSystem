@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+	
+<struts>
+	<!-- #  struts.objectFactory = spring	将action的创建交给spring容器	
+			struts.objectFactory.spring.autoWire = name spring负责装配Action依赖属性
+			-->
+	<constant name="struts.objectFactory" value="spring"></constant>
+
+	<package name="crm" namespace="/" extends="struts-default" >
+		<interceptors>
+		<!-- 注册拦截器 -->
+			<interceptor name="privilegeInterceptor" class="cn.itcast.web.interceptor.PrivilegeInterceptor"></interceptor>
+				
+		<!-- 配置拦截器栈 -->
+				<interceptor-stack name="myStack">
+					<interceptor-ref name="privilegeInterceptor">
+						<param name="excludeMethods">login,regist</param>
+					</interceptor-ref>
+					<interceptor-ref name="defaultStack"></interceptor-ref>
+				</interceptor-stack>
+			</interceptors>
+		<!-- 指定默认拦截器栈 -->
+		<default-interceptor-ref name="myStack"></default-interceptor-ref>
+		
+		<!-- 全局结果集配置 -->
+		<global-results>
+			<result name="toLogin" type="redirect" >/admin/index.jsp</result>
+		</global-results>
+		<global-exception-mappings>
+			<exception-mapping result="error" exception="java.lang.RuntimeException"></exception-mapping>
+		</global-exception-mappings>
+		<!-- 整合方案1:class属性上仍然配置action的完整类名
+				struts2仍然创建action,由spring负责组装Action中的依赖属性
+		 -->
+		 <!-- 
+		 	整合方案2:class属性上填写spring中action对象的BeanName
+		 		完全由spring管理action生命周期,包括Action的创建
+		 		注意:需要手动组装依赖属性
+		  -->
+		<action name="UploadAction" class="cn.travel.web.action.UploadAction" method="{fileUpload}">
+            <!-- 指定（限制）上传文件的类型，定义局部拦截器，修改默认拦截器的属性 
+                "fileUpload.maximumSize" ：限制上传最大的文件大小。 
+                "fileUpload.allowedTypes"：允许上传文件的类型。 
+                "fileUpload.allowedExtensions"：允许上传文件的可扩展文件类型。 -->
+            <!-- <interceptor-ref name="defaultStack">
+                <param name="fileUpload.maximumSize">20480</param>
+                <param name="fileUpload.allowedTypes">image/bmp,image/pjpeg,image/jpg</param>
+                <param name="fileUpload.allowedExtensions">.PNG,.JPG,.BMP,JPEG,GIF</param>
+            </interceptor-ref> -->
+
+            <result>/success.jsp</result>
+            <!-- 出现错误自动会返回input结果，进入结果视图 -->
+            <result name="input" >/error.jsp</result>
+        </action>
+		<action name="UserAction_*" class="userAction" method="{1}" >
+			<result name="toHome" type="redirect">/admin/home.jsp</result>
+			<result name="toList" type="redirect">/admin/user/userlist.jsp</result>
+			<result name="error" >/admin/index.jsp</result>
+		</action>
+		<action name="NewsInfoAction_*" class="newsInfoAction" method="{1}" >
+			<result name="toAdd"  >/admin/news/newsupload.jsp</result>
+			<result name="list"  >/admin/news/adminnewslist.jsp</result>
+			<result name="toList" type="redirectAction">
+				<param name="actionName">NewsInfoAction_list</param>
+				<param name="nameSpace">/</param>
+			</result>
+			<result name="toNewItem"  >/admin/news/adminnewsitem.jsp</result>
+			<result name="toNewExamine"  >/admin/news/adminnewsexamine.jsp</result>
+		</action>
+		<action name="TopicAction_*" class="topicAction" method="{1}" >
+			<result name="toAddNews"  >/admin/news/adminaddnews.jsp</result>
+		</action>
+		<action name="ScenicSpotAction_*" class="scenicSpotAction" method="{1}" >
+			<result name="list"  >/admin/scenicspot/scenicspot_list.jsp</result>
+			<result name="spotList"  >/spot-list.jsp</result>
+			<result name="toList" type="redirectAction">
+				<param name="actionName">ScenicSpotAction_list</param>
+				<param name="nameSpace">/</param>
+			</result>
+			<result name="toEdit"  >/admin/scenicspot/scenicspot_add.jsp</result>
+		</action>
+		<action name="BaseDictAction" class="baseDictAction" method="execute" ></action>
+		<action name="LinkManAction_*" class="linkManAction" method="{1}" >
+			<result name="list"  >/jsp/linkman/list.jsp</result>
+			<result name="error"  >/jsp/linkman/add.jsp</result>
+			<result name="toEdit"  >/jsp/linkman/add.jsp</result>
+			<result name="toList" type="redirectAction">
+				<param name="actionName">LinkManAction_list</param>
+				<param name="nameSpace">/</param>
+			</result>
+		</action>
+		
+		<action name="StypeAction_*" class="stypeAction" method="{1}" >
+			<result name="toAdd" >/admin/scenicspot/scenicspot_add.jsp</result>
+			<result name="toEdit" >/admin/scenicspot/scenicspot_add.jsp</result>
+		</action>
+		<action name="MemberAction_*" class="memberAction" method="{1}" >
+			<result name="toIndex">/admin/member/memberhome.jsp</result>
+			<result name="toList">/admin/user/memberlist.jsp</result>
+			<result name="error" >/login.html</result>
+		</action>
+	</package>
+	
+</struts>
+	
